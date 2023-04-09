@@ -1,0 +1,363 @@
+chelchik@gb-linux:~$ sudo su
+
+root@gb-linux:~# lxc-create -n hwork2 -t download
+Downloading the image index
+
+---
+DIST    RELEASE ARCH    VARIANT BUILD
+---
+almalinux       8       amd64   default 20230407_23:08
+almalinux       8       arm64   default 20230407_23:08
+almalinux       8       ppc64el default 20230407_23:08
+almalinux       9       amd64   default 20230407_23:08
+almalinux       9       arm64   default 20230407_23:08
+almalinux       9       ppc64el default 20230407_23:08
+alpine  3.14    amd64   default 20230408_13:01
+alpine  3.14    arm64   default 20230408_13:01
+alpine  3.14    armhf   default 20230408_13:01
+alpine  3.14    i386    default 20230408_13:02
+alpine  3.14    ppc64el default 20230408_13:00
+alpine  3.14    s390x   default 20230408_13:00
+alpine  3.15    amd64   default 20230408_13:00
+alpine  3.15    arm64   default 20230408_13:00
+alpine  3.15    armhf   default 20230408_13:00
+alpine  3.15    i386    default 20230408_13:00
+alpine  3.15    ppc64el default 20230408_13:00
+alpine  3.15    s390x   default 20230408_13:00
+alpine  3.16    amd64   default 20230408_13:00
+alpine  3.16    arm64   default 20230408_13:00
+alpine  3.16    armhf   default 20230408_13:00
+alpine  3.16    i386    default 20230408_13:02
+alpine  3.16    ppc64el default 20230408_13:00
+alpine  3.16    s390x   default 20230408_13:00
+alpine  3.17    amd64   default 20230408_13:01
+alpine  3.17    arm64   default 20230408_13:00
+alpine  3.17    armhf   default 20230408_13:01
+alpine  3.17    i386    default 20230408_13:01
+alpine  3.17    ppc64el default 20230408_13:00
+alpine  3.17    s390x   default 20230408_13:00
+alpine  edge    amd64   default 20230408_13:01
+alpine  edge    arm64   default 20230408_13:01
+alpine  edge    armhf   default 20230408_13:01
+alpine  edge    i386    default 20230408_13:00
+alpine  edge    ppc64el default 20230408_13:01
+alpine  edge    s390x   default 20230408_13:00
+alt     Sisyphus        amd64   default 20230408_01:17
+alt     Sisyphus        arm64   default 20230408_01:17
+alt     Sisyphus        armhf   default 20230408_01:17
+alt     Sisyphus        ppc64el default 20230408_01:17
+alt     p10     amd64   default 20230408_01:17
+alt     p10     arm64   default 20230408_01:17
+alt     p10     armhf   default 20230408_01:17
+alt     p10     ppc64el default 20230408_01:17
+alt     p9      amd64   default 20230408_01:17
+alt     p9      arm64   default 20230408_01:17
+alt     p9      armhf   default 20230408_01:17
+alt     p9      ppc64el default 20230408_01:17
+amazonlinux     current amd64   default 20230408_05:09
+amazonlinux     current arm64   default 20230408_05:09
+apertis v2020   amd64   default 20230408_10:53
+apertis v2020   arm64   default 20230408_10:53
+apertis v2020   armhf   default 20230408_10:53
+apertis v2021   amd64   default 20230408_10:53
+apertis v2021   arm64   default 20230408_10:53
+apertis v2021   armhf   default 20230408_10:53
+archlinux       current amd64   default 20230408_04:18
+archlinux       current arm64   default 20230408_04:18
+archlinux       current armhf   default 20230408_04:18
+busybox 1.34.1  amd64   default 20230408_06:01
+busybox 1.34.1  arm64   default 20230408_06:00
+centos  7       amd64   default 20230408_07:09
+centos  7       arm64   default 20230408_07:08
+centos  7       armhf   default 20230408_07:08
+centos  7       i386    default 20230408_07:08
+centos  7       ppc64el default 20230408_07:08
+centos  8-Stream        amd64   default 20230408_07:08
+centos  8-Stream        arm64   default 20230408_07:46
+centos  8-Stream        ppc64el default 20230408_07:08
+centos  9-Stream        amd64   default 20230408_07:08
+centos  9-Stream        arm64   default 20230408_07:46
+centos  9-Stream        ppc64el default 20230408_07:08
+debian  bookworm        amd64   default 20230408_05:24
+debian  bookworm        arm64   default 20230408_05:24
+debian  bookworm        armel   default 20230408_05:25
+debian  bookworm        armhf   default 20230408_05:24
+debian  bookworm        i386    default 20230408_05:24
+debian  bookworm        ppc64el default 20230408_05:24
+debian  bookworm        s390x   default 20230408_05:24
+debian  bullseye        amd64   default 20230408_05:24
+debian  bullseye        arm64   default 20230408_05:24
+debian  bullseye        armel   default 20230408_05:24
+debian  bullseye        armhf   default 20230408_05:24
+debian  bullseye        i386    default 20230408_05:24
+debian  bullseye        ppc64el default 20230408_05:24
+debian  bullseye        s390x   default 20230408_05:24
+debian  buster  amd64   default 20230324_06:02
+debian  buster  arm64   default 20230324_06:03
+debian  buster  armel   default 20230324_06:03
+debian  buster  armhf   default 20230324_06:03
+debian  buster  i386    default 20230324_06:02
+debian  buster  ppc64el default 20230324_06:01
+debian  buster  s390x   default 20230324_06:01
+debian  sid     amd64   default 20230408_05:24
+debian  sid     arm64   default 20230408_05:25
+debian  sid     armel   default 20230408_05:24
+debian  sid     armhf   default 20230408_05:24
+debian  sid     i386    default 20230408_05:25
+debian  sid     ppc64el default 20230408_05:24
+debian  sid     s390x   default 20230408_05:24
+devuan  ascii   amd64   default 20230408_11:50
+devuan  ascii   arm64   default 20230408_11:50
+devuan  ascii   armel   default 20230408_11:51
+devuan  ascii   armhf   default 20230408_11:50
+devuan  ascii   i386    default 20230408_11:50
+devuan  beowulf amd64   default 20230408_12:18
+devuan  beowulf arm64   default 20230408_11:50
+devuan  beowulf armel   default 20230408_11:50
+devuan  beowulf armhf   default 20230408_11:50
+devuan  beowulf i386    default 20230408_11:50
+devuan  beowulf ppc64el default 20230408_11:50
+devuan  chimaera        amd64   default 20230408_11:50
+devuan  chimaera        arm64   default 20230408_12:18
+devuan  chimaera        armel   default 20230408_11:50
+devuan  chimaera        armhf   default 20230408_11:50
+devuan  chimaera        i386    default 20230408_11:50
+devuan  chimaera        ppc64el default 20230408_11:50
+fedora  36      amd64   default 20230407_20:33
+fedora  36      arm64   default 20230407_20:33
+fedora  36      ppc64el default 20230407_20:33
+fedora  36      s390x   default 20230407_20:33
+fedora  37      amd64   default 20230407_20:33
+fedora  37      arm64   default 20230407_20:33
+fedora  37      ppc64el default 20230407_20:33
+fedora  37      s390x   default 20230407_20:33
+fedora  Rawhide amd64   default 20230407_20:33
+fedora  Rawhide arm64   default 20230406_22:19
+fedora  Rawhide ppc64el default 20230406_20:33
+fedora  Rawhide s390x   default 20230407_20:33
+funtoo  1.4     amd64   default 20230408_16:47
+funtoo  1.4     armhf   default 20230408_16:45
+funtoo  next    amd64   default 20230408_16:45
+kali    current amd64   default 20230408_17:14
+kali    current arm64   default 20230408_17:14
+kali    current armel   default 20230408_17:14
+kali    current armhf   default 20230408_17:33
+mint    tara    amd64   default 20230408_08:52
+mint    tessa   amd64   default 20230408_08:52
+mint    tina    amd64   default 20230408_08:51
+mint    tricia  amd64   default 20230408_08:52
+mint    ulyana  amd64   default 20230408_08:51
+mint    ulyssa  amd64   default 20230408_08:51
+mint    uma     amd64   default 20230408_08:51
+mint    una     amd64   default 20230408_08:52
+mint    vanessa amd64   default 20230408_08:51
+mint    vera    amd64   default 20230408_08:51
+openeuler       20.03   amd64   default 20230408_15:49
+openeuler       22.03   amd64   default 20230408_15:48
+openeuler       22.09   amd64   default 20230408_15:48
+opensuse        15.4    amd64   default 20230408_05:19
+opensuse        15.4    arm64   default 20230407_04:20
+opensuse        15.4    ppc64el default 20230407_04:20
+opensuse        15.4    s390x   default 20230407_04:20
+opensuse        tumbleweed      amd64   default 20230407_04:20
+opensuse        tumbleweed      arm64   default 20230407_04:20
+opensuse        tumbleweed      ppc64el default 20230407_04:20
+opensuse        tumbleweed      s390x   default 20230407_04:20
+openwrt 21.02   amd64   default 20230408_11:57
+openwrt 21.02   arm64   default 20230408_11:58
+openwrt 21.02   armhf   default 20230408_11:58
+openwrt 22.03   amd64   default 20230408_11:58
+openwrt 22.03   arm64   default 20230408_11:57
+openwrt 22.03   armhf   default 20230408_11:58
+openwrt snapshot        amd64   default 20230408_11:57
+openwrt snapshot        arm64   default 20230408_11:57
+openwrt snapshot        armhf   default 20230408_11:58
+oracle  7       amd64   default 20230408_07:46
+oracle  7       arm64   default 20230408_07:47
+oracle  8       amd64   default 20230408_07:46
+oracle  8       arm64   default 20230408_07:48
+oracle  9       amd64   default 20230408_07:46
+oracle  9       arm64   default 20230408_08:36
+plamo   6.x     amd64   default 20230408_01:33
+plamo   7.x     amd64   default 20230408_01:33
+pld     current amd64   default 20230407_20:46
+rockylinux      8       amd64   default 20230408_02:06
+rockylinux      8       arm64   default 20230408_02:06
+rockylinux      9       amd64   default 20230408_02:06
+rockylinux      9       arm64   default 20230408_02:52
+rockylinux      9       ppc64el default 20230408_02:06
+springdalelinux 7       amd64   default 20230408_06:40
+springdalelinux 7       i386    default 20230408_06:38
+springdalelinux 8       amd64   default 20230408_06:38
+springdalelinux 9       amd64   default 20230408_06:38
+ubuntu  bionic  amd64   default 20230408_07:43
+ubuntu  bionic  arm64   default 20230408_07:43
+ubuntu  bionic  armhf   default 20230408_07:43
+ubuntu  bionic  i386    default 20230408_07:43
+ubuntu  bionic  ppc64el default 20230408_07:42
+ubuntu  bionic  s390x   default 20230408_07:53
+ubuntu  focal   amd64   default 20230408_07:42
+ubuntu  focal   arm64   default 20230408_07:43
+ubuntu  focal   armhf   default 20230408_07:43
+ubuntu  focal   ppc64el default 20230408_07:55
+ubuntu  focal   s390x   default 20230408_07:42
+ubuntu  jammy   amd64   default 20230408_07:42
+ubuntu  jammy   arm64   default 20230408_07:43
+ubuntu  jammy   armhf   default 20230408_07:43
+ubuntu  jammy   ppc64el default 20230408_07:55
+ubuntu  jammy   s390x   default 20230408_07:42
+ubuntu  kinetic amd64   default 20230408_07:42
+ubuntu  kinetic arm64   default 20230408_07:43
+ubuntu  kinetic armhf   default 20230408_07:43
+ubuntu  kinetic ppc64el default 20230408_07:42
+ubuntu  kinetic s390x   default 20230408_07:42
+ubuntu  lunar   amd64   default 20230408_07:42
+ubuntu  lunar   arm64   default 20230408_07:43
+ubuntu  lunar   armhf   default 20230408_07:43
+ubuntu  lunar   ppc64el default 20230408_07:57
+ubuntu  lunar   s390x   default 20230408_07:42
+ubuntu  xenial  amd64   default 20230408_07:42
+ubuntu  xenial  arm64   default 20230408_07:43
+ubuntu  xenial  armhf   default 20230408_07:43
+ubuntu  xenial  i386    default 20230408_07:42
+ubuntu  xenial  ppc64el default 20230408_07:42
+ubuntu  xenial  s390x   default 20230408_07:53
+voidlinux       current amd64   default 20230408_17:10
+voidlinux       current arm64   default 20230408_17:10
+voidlinux       current armhf   default 20230408_17:10
+---
+
+Distribution:
+ubuntu
+Release:
+jammy
+Architecture:
+amd64
+
+Downloading the image index
+Downloading the rootfs
+Downloading the metadata
+The image cache is now ready
+Unpacking the rootfs
+
+---
+You just created an Ubuntu jammy amd64 (20230408_07:42) container.
+
+To enable SSH, run: apt install openssh-server
+No default root or user password are set by LXC.
+
+root@gb-linux:~# lxc-ls -f
+
+NAME   STATE   AUTOSTART GROUPS IPV4 IPV6 UNPRIVILEGED
+hwork2 STOPPED 0         -      -    -    false
+
+root@gb-linux:~# lxc-start -d -n hwork2
+
+root@gb-linux:~# lxc-attach -n hwork2
+
+root@hwork2:~# free
+               total        used        free      shared  buff/cache   available
+Mem:         2022180       26736     1989640         100        5804     1995444
+Swap:              0           0           0
+
+root@hwork2:~# exit
+exit
+
+root@gb-linux:~# lxc-stop -n hwork2
+
+root@gb-linux:~# nano /var/lib/lxc/hwork2/config
+	# Parameters passed to the template:
+	# For additional config options, please look at lxc.container.conf(5)
+
+	# Uncomment the following line to support nesting containers:
+	#lxc.include = /usr/share/lxc/config/nesting.conf
+	# (Be aware this has security implications)
+
+
+	# Distribution configuration
+	lxc.include = /usr/share/lxc/config/common.conf
+	lxc.arch = linux64
+
+	# Container specific configuration
+	lxc.rootfs.path = dir:/var/lib/lxc/hwork2/rootfs
+	lxc.uts.name = hwork2
+
+	lxc.cgroup2.memory.max = 256M
+	lxc.start.auto = 1
+
+	# Network configuration
+	lxc.net.0.type = veth
+	lxc.net.0.link = lxcbr0
+	lxc.net.0.flags = up
+	lxc.net.0.hwaddr = 00:16:3e:ef:b2:b9
+
+root@gb-linux:~# cat /var/lib/lxc/hwork2/config
+# Template used to create this container: /usr/share/lxc/templates/lxc-download
+# Parameters passed to the template:
+# For additional config options, please look at lxc.container.conf(5)
+
+# Uncomment the following line to support nesting containers:
+#lxc.include = /usr/share/lxc/config/nesting.conf
+# (Be aware this has security implications)
+
+
+# Distribution configuration
+lxc.include = /usr/share/lxc/config/common.conf
+lxc.arch = linux64
+
+# Container specific configuration
+lxc.rootfs.path = dir:/var/lib/lxc/hwork2/rootfs
+lxc.uts.name = hwork2
+
+lxc.cgroup2.memory.max = 256M
+lxc.start.auto = 1
+
+# Network configuration
+lxc.net.0.type = veth
+lxc.net.0.link = lxcbr0
+lxc.net.0.flags = up
+lxc.net.0.hwaddr = 00:16:3e:ef:b2:b9
+
+root@gb-linux:~# lxc-start -d -n hwork2 --logfile /home/chelchik/log.log
+
+root@gb-linux:~# reboot
+Connection to 127.0.0.1 closed by remote host.
+Connection to 127.0.0.1 closed.
+
+C:\Users\chelc>ssh -p 8022 chelchik@127.0.0.1
+chelchik@127.0.0.1's password:
+Welcome to Ubuntu 22.04.1 LTS (GNU/Linux 5.19.0-38-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+185 обновлений может быть применено немедленно.
+Чтобы просмотреть дополнительные обновления выполните: apt list --upgradable
+
+Last login: Sun Apr  9 07:00:47 2023 from 10.0.2.2
+
+chelchik@gb-linux:~$sudo su
+
+root@gb-linux:~# lxc-ls -f
+NAME   STATE   AUTOSTART GROUPS IPV4      IPV6 UNPRIVILEGED
+hwork2 RUNNING 1         -      10.0.3.18 -    false
+
+root@gb-linux:~# lxc-attach -n hwork2
+
+root@hwork2:~# free
+               total        used        free      shared  buff/cache   available
+Mem:          262144       26480      213368          96       22296      235664
+Swap:              0           0           0
+
+root@gb-linux:~# lxc-stop -n hwork2
+
+root@gb-linux:~# cat /home/chelchik/log.log
+
+root@gb-linux:~# lxc-start -n hwork2 --logfile /home/chelchik/log.log
+
+root@gb-linux:~# lxc-start -n hwork2 --logfile /home/chelchik/log.log
+lxc-start: hwork2: tools/lxc_start.c: main: 256 Container is already running
+
+root@gb-linux:~# cat /home/chelchik/log.log
+lxc-start hwork2 20230409021941.233 ERROR    lxc_start - tools/lxc_start.c:main:256 - Container is already running

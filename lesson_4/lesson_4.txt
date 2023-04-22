@@ -1,0 +1,254 @@
+chelchik@gb-linux:~$ sudo su
+
+root@gb-linux:/home/chelchik# mkdir homework4
+
+root@gb-linux:/home/chelchik# cd homework4
+
+root@gb-linux:/home/chelchik/homework4# mkdir files
+
+root@gb-linux:/home/chelchik/homework4# cd files
+
+root@gb-linux:/home/chelchik/homework4/files# nano run.sh
+    #!/bin/sh
+
+    # execute any pre-init scripts
+    for i in /scripts/pre-init.d/*sh
+    do
+        if [ -e "${i}" ]; then
+            echo "[i] pre-init.d - processing $i"
+            . "${i}"
+        fi
+    done
+
+    if [ -d "/run/mysqld" ]; then
+        echo "[i] mysqld already present, skipping creation"
+        chown -R mysql:mysql /run/mysqld
+    else
+        echo "[i] mysqld not found, creating...."
+        mkdir -p /run/mysqld
+        chown -R mysql:mysql /run/mysqld
+    fi
+
+    if [ -d /var/lib/mysql/mysql ]; then
+        echo "[i] MySQL directory already present, skipping creation"
+        chown -R mysql:mysql /var/lib/mysql
+    else
+        echo "[i] MySQL data directory not found, creating initial DBs"
+
+        chown -R mysql:mysql /var/lib/mysql
+
+        mysql_install_db --user=mysql --ldata=/var/lib/mysql > /dev/null
+
+        if [ "$MYSQL_ROOT_PASSWORD" = "" ]; then
+            MYSQL_ROOT_PASSWORD=`pwgen 16 1`
+            echo "[i] MySQL root Password: $MYSQL_ROOT_PASSWORD"
+        fi
+
+        MYSQL_DATABASE=${MYSQL_DATABASE:-""}
+        MYSQL_USER=${MYSQL_USER:-""}
+        MYSQL_PASSWORD=${MYSQL_PASSWORD:-""}
+
+        tfile=`mktemp`
+        if [ ! -f "$tfile" ]; then
+            return 1
+        fi
+
+        cat << EOF > $tfile
+    USE mysql;
+    FLUSH PRIVILEGES ;
+    GRANT ALL ON *.* TO 'root'@'%' identified by '$MYSQL_ROOT_PASSWORD' WITH GRANT OPTION ;
+    GRANT ALL ON *.* TO 'root'@'localhost' identified by '$MYSQL_ROOT_PASSWORD' WITH GRANT OPTION ;
+    SET PASSWORD FOR 'root'@'localhost'=PASSWORD('${MYSQL_ROOT_PASSWORD}') ;
+    DROP DATABASE IF EXISTS test ;
+    FLUSH PRIVILEGES ;
+    EOF
+
+        if [ "$MYSQL_DATABASE" != "" ]; then
+            echo "[i] Creating database: $MYSQL_DATABASE"
+            if [ "$MYSQL_CHARSET" != "" ] && [ "$MYSQL_COLLATION" != "" ]; then
+                echo "[i] with character set [$MYSQL_CHARSET] and collation [$MYSQL_COLLATION]"
+                echo "CREATE DATABASE IF NOT EXISTS \`$MYSQL_DATABASE\` CHARACTER SET $MYSQL_CHARSET COLLATE $MYSQL_COLLATION;" >> $tfile
+            else
+                echo "[i] with character set: 'utf8' and collation: 'utf8_general_ci'"
+                echo "CREATE DATABASE IF NOT EXISTS \`$MYSQL_DATABASE\` CHARACTER SET utf8 COLLATE utf8_general_ci;" >> $tfile
+            fi
+
+            if [ "$MYSQL_USER" != "" ]; then
+                echo "[i] Creating user: $MYSQL_USER with password $MYSQL_PASSWORD"
+                echo "GRANT ALL ON \`$MYSQL_DATABASE\`.* to '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD';" >> $tfile
+            fi
+        fi
+
+        /usr/bin/mysqld --user=mysql --bootstrap --verbose=0 --skip-name-resolve --skip-networking=0 < $tfile
+        rm -f $tfile
+
+        # only run if we have a starting MYSQL_DATABASE env variable AND
+        # the /docker-entrypoint-initdb.d/ file is not empty
+        if [ "$MYSQL_DATABASE" != "" ] && [ "$(ls -A /docker-entrypoint-initdb.d 2>/dev/null)" ]; then
+
+            # start the server temporarily so that we can import seed files
+            echo
+            echo "Preparing to process the contents of /docker-entrypoint-initdb.d/"
+            echo
+            TEMP_OUTPUT_LOG=/tmp/mysqld_output
+            /usr/bin/mysqld --user=mysql --skip-name-resolve --skip-networking=0 --silent-startup > "${TEMP_OUTPUT_LOG}" 2>&1 &
+            PID="$!"
+        
+            # watch the output log until the server is running
+            until tail "${TEMP_OUTPUT_LOG}" | grep -q "Version:"; do
+                sleep 0.2
+            done
+
+            # use mysql client to import seed files while temp db is running
+            # use the starting MYSQL_DATABASE so mysql knows where to import
+            MYSQL_CLIENT="/usr/bin/mysql -u root -p$MYSQL_ROOT_PASSWORD"
+            
+            # loop through all the files in the seed directory
+            # redirect input (<) from .sql files into the mysql client command line
+            # pipe (|) the output of using `gunzip -c` on .sql.gz files
+            for f in /docker-entrypoint-initdb.d/*; do
+                case "$f" in
+                    *.sql)    echo "  $0: running $f"; eval "${MYSQL_CLIENT} ${MYSQL_DATABASE} < $f"; echo ;;
+                    *.sql.gz) echo "  $0: running $f"; gunzip -c "$f" | eval "${MYSQL_CLIENT} ${MYSQL_DATABASE}"; echo ;;
+                esac
+            done
+
+            # send the temporary mysqld server a shutdown signal
+            # and wait till it's done before completeing the init process
+            kill -s TERM "${PID}"
+            wait "${PID}"
+            rm -f TEMP_OUTPUT_LOG
+            echo "Completed processing seed files."
+        fi;
+
+        echo
+        echo 'MySQL init process done. Ready for start up.'
+        echo
+
+        echo "exec /usr/bin/mysqld --user=mysql --console --skip-name-resolve --skip-networking=0" "$@"
+    fi
+
+    # execute any pre-exec scripts
+    for i in /scripts/pre-exec.d/*sh
+    do
+        if [ -e "${i}" ]; then
+            echo "[i] pre-exec.d - processing $i"
+            . ${i}
+        fi
+    done
+
+    exec /usr/bin/mysqld --user=mysql --console --skip-name-resolve --skip-networking=0 $@
+
+root@gb-linux:/home/chelchik/homework4/files# cd ..
+
+root@gb-linux:/home/chelchik/homework4# nano dockerfile
+FROM yobasystems/alpine:3.17.2-amd64
+
+ARG BUILD_DATE
+ARG VCS_REF
+
+LABEL maintainer="Dominic Taylor <dominic@yobasystems.co.uk>" \
+    architecture="amd64/x86_64" \
+    mariadb-version="10.6.12" \
+    alpine-version="3.17.2" \
+    build="25-Mar-2023" \
+    org.opencontainers.image.title="alpine-mariadb" \
+    org.opencontainers.image.description="MariaDB Docker image running on Alpine Linux" \
+    org.opencontainers.image.authors="Dominic Taylor <dominic@yobasystems.co.uk>" \
+    org.opencontainers.image.vendor="Yoba Systems" \
+    org.opencontainers.image.version="v10.6.12" \
+    org.opencontainers.image.url="https://hub.docker.com/r/yobasystems/alpine-mariadb/" \
+    org.opencontainers.image.source="https://github.com/yobasystems/alpine-mariadb" \
+    org.opencontainers.image.revision=$VCS_REF \
+    org.opencontainers.image.created=$BUILD_DATE
+
+RUN apk add --no-cache mariadb mariadb-client mariadb-server-utils pwgen && \
+    rm -f /var/cache/apk/*
+
+ADD files/run.sh /scripts/run.sh
+RUN mkdir /docker-entrypoint-initdb.d && \
+    mkdir /scripts/pre-exec.d && \
+    mkdir /scripts/pre-init.d && \
+    chmod -R 755 /scripts
+
+EXPOSE 3306
+
+VOLUME ["/var/lib/mysql"]
+
+ENTRYPOINT ["/scripts/run.sh"]
+    
+
+
+root@gb-linux:/home/chelchik/homework4# docker build -t mariadbtest .
+Sending build context to Docker daemon  4.096kB
+Step 1/10 : FROM yobasystems/alpine:3.17.2-amd64
+ ---> 2507f3ab62f4
+Step 2/10 : ARG BUILD_DATE
+ ---> Running in 8db77b99b4af
+Removing intermediate container 8db77b99b4af
+ ---> 315fc33eb2c4
+Step 3/10 : ARG VCS_REF
+ ---> Running in 0e574be894de
+Removing intermediate container 0e574be894de
+ ---> 137d0f8aee9b
+Step 4/10 : LABEL maintainer="Dominic Taylor <dominic@yobasystems.co.uk>"     architecture="amd64/x86_64"     mariadb-version="10.6.12"     alpine-version="3.17.2"     build="25-Mar-2023"     org.opencontainers.image.title="alpine-mariadb"     org.opencontainers.image.description="MariaDB Docker image running on Alpine Linux"     org.opencontainers.image.authors="Dominic Taylor <dominic@yobasystems.co.uk>"     org.opencontainers.image.vendor="Yoba Systems"     org.opencontainers.image.version="v10.6.12"     org.opencontainers.image.url="https://hub.docker.com/r/yobasystems/alpine-mariadb/"     org.opencontainers.image.source="https://github.com/yobasystems/alpine-mariadb"     org.opencontainers.image.revision=$VCS_REF     org.opencontainers.image.created=$BUILD_DATE
+ ---> Running in 49cb326775ee
+Removing intermediate container 49cb326775ee
+ ---> bcc127c70e9d
+Step 5/10 : RUN apk add --no-cache mariadb mariadb-client mariadb-server-utils pwgen &&     rm -f /var/cache/apk/*
+ ---> Running in 8849c230f3a0
+fetch https://dl-cdn.alpinelinux.org/alpine/v3.17/main/x86_64/APKINDEX.tar.gz
+fetch https://dl-cdn.alpinelinux.org/alpine/v3.17/community/x86_64/APKINDEX.tar.gz
+(1/20) Installing mariadb-common (10.6.12-r0)
+(2/20) Installing libaio (0.3.113-r0)
+(3/20) Installing ca-certificates (20220614-r4)
+(4/20) Installing brotli-libs (1.0.9-r9)
+(5/20) Installing nghttp2-libs (1.51.0-r0)
+(6/20) Installing libcurl (8.0.1-r0)
+(7/20) Installing libgcc (12.2.1_git20220924-r4)
+(8/20) Installing xz-libs (5.2.9-r0)
+(9/20) Installing ncurses-terminfo-base (6.3_p20221119-r0)
+(10/20) Installing ncurses-libs (6.3_p20221119-r0)
+(11/20) Installing linux-pam (1.5.2-r1)
+(12/20) Installing pcre2 (10.42-r0)
+(13/20) Installing libstdc++ (12.2.1_git20220924-r4)
+(14/20) Installing libxml2 (2.10.4-r0)
+(15/20) Installing mariadb (10.6.12-r0)
+Executing mariadb-10.6.12-r0.pre-install
+(16/20) Installing mariadb-client (10.6.12-r0)
+(17/20) Installing libbz2 (1.0.8-r4)
+(18/20) Installing perl (5.36.0-r1)
+(19/20) Installing mariadb-server-utils (10.6.12-r0)
+(20/20) Installing pwgen (2.08-r2)
+Executing busybox-1.35.0-r29.trigger
+Executing ca-certificates-20220614-r4.trigger
+OK: 233 MiB in 35 packages
+Removing intermediate container 8849c230f3a0
+ ---> 4124fdc61004
+Step 6/10 : ADD files/run.sh /scripts/run.sh
+ ---> 97c5e2651a89
+Step 7/10 : RUN mkdir /docker-entrypoint-initdb.d &&     mkdir /scripts/pre-exec.d &&     mkdir /scripts/pre-init.d &&     chmod -R 755 /scripts
+ ---> Running in 1d0b31e890a7
+Removing intermediate container 1d0b31e890a7
+ ---> 5e58b008d0cb
+Step 8/10 : EXPOSE 3306
+ ---> Running in d6e2786827dd
+Removing intermediate container d6e2786827dd
+ ---> 96b3ba6c6166
+Step 9/10 : VOLUME ["/var/lib/mysql"]
+ ---> Running in 972f4a18205c
+Removing intermediate container 972f4a18205c
+ ---> f32bb3e56b1c
+Step 10/10 : ENTRYPOINT ["/scripts/run.sh"]
+ ---> Running in 3e2a184e0353
+Removing intermediate container 3e2a184e0353
+ ---> 934280b51664
+Successfully built 934280b51664
+Successfully tagged mariadbtest:latest
+
+root@gb-linux:/home/chelchik/homework4# docker run -h mymariadb  --name mymariadb -p 3606:3606 -e MYSQL_ROOT_PASSWORD=111 -d mariadbtest
+453b4ebcff6bc2bb77fa397f20eedaf9176d71e83174451e95a010963f3be665
+
+root@gb-linux:/home/chelchik/homework4# docker run --name myPHP -d --link mymariadb:db -p 8081:80 phpmyadmin/phpmyadmin
+f9a12ffd659d90aa0ecbf4203c44e47e3350692d79b5e7818daa1680a15e4258
+

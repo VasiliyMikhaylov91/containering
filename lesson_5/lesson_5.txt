@@ -1,0 +1,283 @@
+C:\Users\chelc>ssh chelchik@192.168.1.96
+The authenticity of host '192.168.1.96 (192.168.1.96)' can't be established.
+ECDSA key fingerprint is SHA256:MvYZ8JXiQR1QtXDeL0bNgEV8NjO6xJxS+IK0iBYrc5c.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '192.168.1.96' (ECDSA) to the list of known hosts.
+chelchik@192.168.1.96's password:
+Welcome to Ubuntu 22.04.1 LTS (GNU/Linux 5.19.0-40-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+178 обновлений может быть применено немедленно.
+Чтобы просмотреть дополнительные обновления выполните: apt list --upgradable
+
+Last login: Sat Apr 22 11:50:44 2023 from 10.0.2.2
+chelchik@gb-linux:~$ sudo su
+root@gb-linux:/home/chelchik# nano compose.yaml
+    version: '3.9'
+
+    services:
+
+    db:
+        image: mariadb:10.10.2
+        restart: always
+        environment:
+          MYSQL_ROOT_PASSWORD: 123457
+
+    adminer:
+        image: adminer:4.8.1
+        restart: always
+        ports:
+        - 6080:8080
+
+root@gb-linux:/home/chelchik# docker-compose up -d
+Creating network "chelchik_default" with the default driver
+Pulling db (mariadb:10.10.2)...
+10.10.2: Pulling from library/mariadb
+10ac4908093d: Pull complete
+44779101e748: Pull complete
+a721db3e3f3d: Pull complete
+1850a929b84a: Pull complete
+397a918c7da3: Pull complete
+806be17e856d: Pull complete
+634de6c90876: Pull complete
+cd00854cfb1a: Pull complete
+Digest: sha256:bfc25a68e113de43d0d112f5a7126df8e278579c3224e3923359e1c1d8d5ce6e
+Status: Downloaded newer image for mariadb:10.10.2
+Pulling adminer (adminer:4.8.1)...
+4.8.1: Pulling from library/adminer
+b0248cf3e63c: Pull complete
+879178bf91e5: Pull complete
+e6fdf216e01a: Pull complete
+ddb61091e569: Pull complete
+9980a061c8ab: Pull complete
+fc5edff67483: Pull complete
+f4912d736721: Pull complete
+Digest: sha256:5dd0854c240d45ff79a782b70793c117ff7557160addc60583835f783ea555c4
+Status: Downloaded newer image for adminer:4.8.1
+Creating chelchik_db_1      ... done
+Creating chelchik_adminer_1 ... done
+
+root@gb-linux:/home/chelchik# docker ps
+CONTAINER ID   IMAGE             COMMAND                  CREATED          STATUS          PORTS                                       NAMES
+7f4f69a5a8fb   mariadb:10.10.2   "docker-entrypoint.s…"   52 seconds ago   Up 48 seconds   3306/tcp                                    chelchik_db_1
+8291950338d2   adminer:4.8.1     "entrypoint.sh php -…"   52 seconds ago   Up 48 seconds   0.0.0.0:6080->8080/tcp, :::6080->8080/tcp   chelchik_adminer_1
+
+root@gb-linux:/home/chelchik# docker swarm init
+Swarm initialized: current node (hod1xrsd73kx4k1u1pvywaa3e) is now a manager.
+
+To add a worker to this swarm, run the following command:
+
+    docker swarm join --token SWMTKN-1-1aigu69f2nf6qu1ki8nqn6suwiokrajhtdk5ul6nnjvdnxwu7g-0uy9x00ctyr784w3hgfsoaoo9 192.168.1.96:2377
+
+To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+
+root@gb-linux:/home/chelchik# docker node ls
+ID                            HOSTNAME   STATUS    AVAILABILITY   MANAGER STATUS   ENGINE VERSION
+hod1xrsd73kx4k1u1pvywaa3e *   gb-linux   Ready     Active         Leader           20.10.21
+
+root@gb-linux:/home/chelchik# exit
+exit
+
+chelchik@gb-linux:~$ exit
+выход
+Connection to 192.168.1.96 closed.
+
+
+
+C:\Users\chelc>ssh chelchik@192.168.1.99
+The authenticity of host '192.168.1.99 (192.168.1.99)' can't be established.
+ECDSA key fingerprint is SHA256:MvYZ8JXiQR1QtXDeL0bNgEV8NjO6xJxS+IK0iBYrc5c.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '192.168.1.99' (ECDSA) to the list of known hosts.
+chelchik@192.168.1.99's password:
+Welcome to Ubuntu 22.04.1 LTS (GNU/Linux 5.19.0-40-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+178 обновлений может быть применено немедленно.
+Чтобы просмотреть дополнительные обновления выполните: apt list --upgradable
+
+Last login: Sat Apr 22 11:50:44 2023 from 10.0.2.2
+
+chelchik@gb-linux:~$ sudo su
+[sudo] пароль для chelchik:
+
+root@gb-linux:/home/chelchik# docker swarm join --token SWMTKN-1-1aigu69f2nf6qu1ki8nqn6suwiokrajhtdk5ul6nnjvdnxwu7g-0uy9x00ctyr784w3hgfsoaoo9 192.168.1.96:2377
+This node joined a swarm as a worker.
+
+root@gb-linux:/home/chelchik# nano compose.yaml
+    version: '3.9'
+
+    services:
+
+    db:
+        image: mariadb:10.10.2
+        restart: always
+        environment:
+          MYSQL_ROOT_PASSWORD: 123457
+
+    adminer:
+        image: adminer:4.8.1
+        restart: always
+        ports:
+        - 6080:8080
+
+root@gb-linux:/home/chelchik# docker-compose up -d
+WARNING: The Docker Engine you're using is running in swarm mode.
+
+Compose does not use swarm mode to deploy services to multiple nodes in a swarm. All containers will be scheduled on the current node.
+
+To deploy your application across the swarm, use `docker stack deploy`.
+
+Creating network "chelchik_default" with the default driver
+Pulling db (mariadb:10.10.2)...
+10.10.2: Pulling from library/mariadb
+10ac4908093d: Pull complete
+44779101e748: Pull complete
+a721db3e3f3d: Pull complete
+1850a929b84a: Pull complete
+397a918c7da3: Pull complete
+806be17e856d: Pull complete
+634de6c90876: Pull complete
+cd00854cfb1a: Pull complete
+Digest: sha256:bfc25a68e113de43d0d112f5a7126df8e278579c3224e3923359e1c1d8d5ce6e
+Status: Downloaded newer image for mariadb:10.10.2
+Pulling adminer (adminer:4.8.1)...
+4.8.1: Pulling from library/adminer
+b0248cf3e63c: Pull complete
+879178bf91e5: Pull complete
+e6fdf216e01a: Pull complete
+ddb61091e569: Pull complete
+9980a061c8ab: Pull complete
+fc5edff67483: Pull complete
+f4912d736721: Pull complete
+Digest: sha256:5dd0854c240d45ff79a782b70793c117ff7557160addc60583835f783ea555c4
+Status: Downloaded newer image for adminer:4.8.1
+Creating chelchik_db_1      ... done
+Creating chelchik_adminer_1 ... done
+
+root@gb-linux:/home/chelchik# docker ps
+CONTAINER ID   IMAGE             COMMAND                  CREATED          STATUS          PORTS                                       NAMES
+1cb9f5a36cf0   mariadb:10.10.2   "docker-entrypoint.s…"   51 seconds ago   Up 43 seconds   3306/tcp                                    chelchik_db_1
+c4b7d40deaf8   adminer:4.8.1     "entrypoint.sh php -…"   51 seconds ago   Up 43 seconds   0.0.0.0:6080->8080/tcp, :::6080->8080/tcp   chelchik_adminer_1
+
+root@gb-linux:/home/chelchik# exit
+exit
+chelchik@gb-linux:~$ exit
+выход
+Connection to 192.168.1.99 closed.
+
+
+
+C:\Users\chelc>ssh chelchik@192.168.1.64
+The authenticity of host '192.168.1.64 (192.168.1.64)' can't be established.
+ECDSA key fingerprint is SHA256:MvYZ8JXiQR1QtXDeL0bNgEV8NjO6xJxS+IK0iBYrc5c.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '192.168.1.64' (ECDSA) to the list of known hosts.
+chelchik@192.168.1.64's password:
+Welcome to Ubuntu 22.04.1 LTS (GNU/Linux 5.19.0-40-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+178 обновлений может быть применено немедленно.
+Чтобы просмотреть дополнительные обновления выполните: apt list --upgradable
+
+Last login: Sat Apr 22 11:50:44 2023 from 10.0.2.2
+
+chelchik@gb-linux:~$ sudo su
+[sudo] пароль для chelchik:
+
+root@gb-linux:/home/chelchik# docker swarm join --token SWMTKN-1-1aigu69f2nf6qu1ki8nqn6suwiokrajhtdk5ul6nnjvdnxwu7g-0uy9x00ctyr784w3hgfsoaoo9 192.168.1.96:2377
+This node joined a swarm as a worker.
+
+root@gb-linux:/home/chelchik# nano compose.yaml
+    version: '3.9'
+
+    services:
+
+    db:
+        image: mariadb:10.10.2
+        restart: always
+        environment:
+          MYSQL_ROOT_PASSWORD: 123457
+
+    adminer:
+        image: adminer:4.8.1
+        restart: always
+        ports:
+        - 6080:8080
+
+root@gb-linux:/home/chelchik# docker-compose up -d
+WARNING: The Docker Engine you're using is running in swarm mode.
+
+Compose does not use swarm mode to deploy services to multiple nodes in a swarm. All containers will be scheduled on the current node.
+
+To deploy your application across the swarm, use `docker stack deploy`.
+
+Creating network "chelchik_default" with the default driver
+Pulling db (mariadb:10.10.2)...
+10.10.2: Pulling from library/mariadb
+10ac4908093d: Pull complete
+44779101e748: Pull complete
+a721db3e3f3d: Pull complete
+1850a929b84a: Pull complete
+397a918c7da3: Pull complete
+806be17e856d: Pull complete
+634de6c90876: Pull complete
+cd00854cfb1a: Pull complete
+Digest: sha256:bfc25a68e113de43d0d112f5a7126df8e278579c3224e3923359e1c1d8d5ce6e
+Status: Downloaded newer image for mariadb:10.10.2
+Pulling adminer (adminer:4.8.1)...
+4.8.1: Pulling from library/adminer
+b0248cf3e63c: Pull complete
+879178bf91e5: Pull complete
+e6fdf216e01a: Pull complete
+ddb61091e569: Pull complete
+9980a061c8ab: Pull complete
+fc5edff67483: Pull complete
+f4912d736721: Pull complete
+Digest: sha256:5dd0854c240d45ff79a782b70793c117ff7557160addc60583835f783ea555c4
+Status: Downloaded newer image for adminer:4.8.1
+Creating chelchik_adminer_1 ... done
+Creating chelchik_db_1      ... done
+
+root@gb-linux:/home/chelchik# docker ps
+CONTAINER ID   IMAGE             COMMAND                  CREATED          STATUS          PORTS                                       NAMES
+56006c9a2d69   mariadb:10.10.2   "docker-entrypoint.s…"   32 seconds ago   Up 26 seconds   3306/tcp                                    chelchik_db_1
+cc45369921e9   adminer:4.8.1     "entrypoint.sh php -…"   32 seconds ago   Up 26 seconds   0.0.0.0:6080->8080/tcp, :::6080->8080/tcp   chelchik_adminer_1
+
+root@gb-linux:/home/chelchik# exit
+exit
+chelchik@gb-linux:~$ exit
+выход
+Connection to 192.168.1.64 closed.
+
+
+C:\Users\chelc>ssh chelchik@192.168.1.96
+chelchik@192.168.1.96's password:
+Welcome to Ubuntu 22.04.1 LTS (GNU/Linux 5.19.0-40-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+175 обновлений может быть применено немедленно.
+Чтобы просмотреть дополнительные обновления выполните: apt list --upgradable
+
+Last login: Sat Apr 29 12:38:15 2023 from 192.168.1.18
+
+chelchik@gb-linux:~$ sudo su
+[sudo] пароль для chelchik:
+
+root@gb-linux:/home/chelchik# docker node ls
+ID                            HOSTNAME   STATUS    AVAILABILITY   MANAGER STATUS   ENGINE VERSION
+hod1xrsd73kx4k1u1pvywaa3e *   gb-linux   Ready     Active         Leader           20.10.21
+jazsqke9bccotne5ryhtsgk1d     gb-linux   Ready     Active                          20.10.21
+v52y0zfg8comresnrvzicg1w2     gb-linux   Ready     Active                          20.10.21
